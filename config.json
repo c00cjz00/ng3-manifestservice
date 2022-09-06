@@ -3,5 +3,6 @@
     "aws_secret_access_key": "",
     "manifest_bucket_name" : "",
     "hostname": "",
-    "prefix": ""
+    "prefix": "",
+    "endpoint_url": ""
 }

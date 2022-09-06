@@ -209,11 +209,13 @@ def _add_manifest_to_bucket(current_token, manifest_json):
     Generates and returns the name of the new file.
     """
     session = boto3.Session(
-        region_name="us-east-1",
-        aws_access_key_id=app.config["AWS_ACCESS_KEY_ID"],
-        aws_secret_access_key=app.config["AWS_SECRET_ACCESS_KEY"],
+        aws_access_key_id = app.config["AWS_ACCESS_KEY_ID"],
+        aws_secret_access_key = app.config["AWS_SECRET_ACCESS_KEY"],
     )
-    s3 = session.resource("s3")
+    if "ENDPOINT_URL" in app.config and app.config["ENDPOINT_URL"] != "":
+        s3 = session.resource("s3", endpoint_url = app.config["ENDPOINT_URL"])
+    else:
+        s3 = session.resource("s3")
 
     folder_name = _get_folder_name_from_token(current_token)
 
@@ -249,11 +251,13 @@ def _add_GUID_to_bucket(current_token, GUID):
     with a filename corresponding to the GUID provided by the user.
     """
     session = boto3.Session(
-        region_name="us-east-1",
-        aws_access_key_id=app.config["AWS_ACCESS_KEY_ID"],
-        aws_secret_access_key=app.config["AWS_SECRET_ACCESS_KEY"],
+        aws_access_key_id = app.config["AWS_ACCESS_KEY_ID"],
+        aws_secret_access_key = app.config["AWS_SECRET_ACCESS_KEY"],
     )
-    s3 = session.resource("s3")
+    if "ENDPOINT_URL" in app.config and app.config["ENDPOINT_URL"] != "":
+        s3 = session.resource("s3", endpoint_url = app.config["ENDPOINT_URL"])
+    else:
+        s3 = session.resource("s3")
 
     folder_name = _get_folder_name_from_token(current_token)
 
@@ -360,11 +364,14 @@ def _list_files_in_bucket(bucket_name, folder):
     }
     """
     session = boto3.Session(
-        region_name="us-east-1",
-        aws_access_key_id=app.config["AWS_ACCESS_KEY_ID"],
-        aws_secret_access_key=app.config["AWS_SECRET_ACCESS_KEY"],
+        aws_access_key_id = app.config["AWS_ACCESS_KEY_ID"],
+        aws_secret_access_key = app.config["AWS_SECRET_ACCESS_KEY"],
     )
-    s3 = session.resource("s3")
+
+    if "ENDPOINT_URL" in app.config and app.config["ENDPOINT_URL"] != "":
+        s3 = session.resource("s3", endpoint_url = app.config["ENDPOINT_URL"])
+    else:
+        s3 = session.resource("s3")
 
     manifests = []
     guids = []
@@ -406,11 +413,15 @@ def _get_file_contents(bucket_name, folder, filename):
     """
     Returns the body of a requested file as a string.
     """
-    client = boto3.client(
-        "s3",
-        aws_access_key_id=app.config["AWS_ACCESS_KEY_ID"],
-        aws_secret_access_key=app.config["AWS_SECRET_ACCESS_KEY"],
+    session = boto3.Session(
+        aws_access_key_id = app.config["AWS_ACCESS_KEY_ID"],
+        aws_secret_access_key = app.config["AWS_SECRET_ACCESS_KEY"],
     )
+    if "ENDPOINT_URL" in app.config and app.config["ENDPOINT_URL"] != "":
+        client = session.client("s3", endpoint_url = app.config["ENDPOINT_URL"])
+    else:
+        client = session.client("s3")
+
     obj = client.get_object(Bucket=bucket_name, Key=folder + "/" + filename)
     as_bytes = obj["Body"].read()
     as_string = as_bytes.decode("utf-8")
