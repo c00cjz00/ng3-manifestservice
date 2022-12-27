@@ -67,27 +67,32 @@ You'll need AWS credentials in your environment to run this locally.
 
 ## update
 config.json
+```
     "aws_secret_access_key": "",
     "manifest_bucket_name" : "",
     "hostname": "",
     "prefix": "",
     "endpoint_url": ""
-	
+```	
 manifestservice/api.py
+```
     os.environ["AWS_ACCESS_KEY_ID"] = config_dict["aws_access_key_id"].strip()
     os.environ["AWS_SECRET_ACCESS_KEY"] = config_dict["aws_secret_access_key"].strip()
     if "endpoint_url" in config_dict and config_dict["endpoint_url"] != "":
         app.config["ENDPOINT_URL"] = config_dict["endpoint_url"].strip()
-		
+```		
 
 manifestservice/manifests/__init__.py
+```
 	session = boto3.Session(
         region_name="us-east-1",
         aws_access_key_id=app.config["AWS_ACCESS_KEY_ID"],
         aws_secret_access_key=app.config["AWS_SECRET_ACCESS_KEY"],
 		)
 	s3 = session.resource("s3")
-
+```
+change to
+```
 	session = boto3.Session(
 			aws_access_key_id = app.config["AWS_ACCESS_KEY_ID"],
 			aws_secret_access_key = app.config["AWS_SECRET_ACCESS_KEY"],
@@ -96,3 +101,4 @@ manifestservice/manifests/__init__.py
         s3 = session.resource("s3", endpoint_url = app.config["ENDPOINT_URL"])
     else:
         s3 = session.resource("s3")
+```
